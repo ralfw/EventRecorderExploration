@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace AppKontakt
 {
-    class EventRecorder
+    class EventRecorder : IDisposable
     {
         private const string PATH = "EventRecorder.Events";
-
 
         private int _nächste_laufende_Eventnummer;
 
@@ -52,5 +51,8 @@ namespace AppKontakt
 
 
         public event Action<Domänenevent> Aufgenommen = _ => {};
+
+
+        public void Dispose() {}
     }
 }

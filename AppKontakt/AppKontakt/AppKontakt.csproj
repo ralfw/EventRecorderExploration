@@ -56,7 +56,6 @@
     <Compile Include="Domäne.cs" />
     <Compile Include="Domänenevent.cs" />
     <Compile Include="EventRecorder.cs" />
-    <Compile Include="Kontakt.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

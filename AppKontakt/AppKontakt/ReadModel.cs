@@ -12,48 +12,59 @@ namespace AppKontakt
     class ReadModel : IDisposable
     {
         private readonly EventRecorder _eventRecorder;
-        private const string PATH = @"ReadModel.Daten";
-
         private DataTable _tb;
 
         public ReadModel(EventRecorder eventRecorder)
         {
             _eventRecorder = eventRecorder;
-            Directory.CreateDirectory(PATH);
         }
 
 
         public DataTable Laden()
         {
-            if (!File.Exists(Path.Combine(PATH, "tabelle")))
-            {
-                _tb = new DataTable();
-                _tb.Columns.Add("Id", typeof(string));
-                _tb.Columns.Add("Name", typeof(string));
-                _tb.Columns.Add("Straße", typeof(string));
-                _tb.Columns.Add("PLZ", typeof(string));
-                _tb.Columns.Add("Ort", typeof(string));
-                _tb.Columns.Add("Tel", typeof(string));
+            _tb = new DataTable();
+            _tb.Columns.Add("Id", typeof(string));
+            _tb.Columns.Add("Name", typeof(string));
+            _tb.Columns.Add("Straße", typeof(string));
+            _tb.Columns.Add("PLZ", typeof(string));
+            _tb.Columns.Add("Ort", typeof(string));
+            _tb.Columns.Add("Tel", typeof(string));
 
-                Speichern();
-            }
-
-            using (var fs = new FileStream(Path.Combine(PATH, "tabelle"), FileMode.Open))
-            {
-                var bf = new BinaryFormatter();
-                _tb = (DataTable) bf.Deserialize(fs);
-            }
+            foreach (var e in _eventRecorder.Wiedergeben())
+                Initialisieren(e);
 
             return _tb;
         }
 
-        private void Speichern()
+        private void Initialisieren(Domänenevent e)
         {
-            using (var fs = new FileStream(Path.Combine(PATH, "tabelle"), FileMode.Create))
+            DataRow r;
+
+            switch (e.Name)
             {
-                var bf = new BinaryFormatter();
-                bf.Serialize(fs, _tb);
+                case "NeuerKontakt":
+                    var i = int.Parse(e.Payload["RowIndex"]);
+                    r = _tb.Rows.Add(new object[_tb.Columns.Count]);
+                    foreach (var p in e.Payload)
+                        if (_tb.Columns.Contains(p.Key)) 
+                            r[p.Key] = p.Value;
+                    r["Id"] = e.Entitätsid;
+                    break;
+
+                case "KontaktVerändert":
+                    r = _tb.Rows.Cast<object>().Cast<DataRow>()
+                                .First(_ => _["Id", DataRowVersion.Original].ToString() == e.Entitätsid);
+                    foreach (var p in e.Payload)
+                        r[p.Key] = p.Value;
+                    break;
+                case "KontaktGelöscht":
+                    r = _tb.Rows.Cast<object>().Cast<DataRow>()
+                                .First(_ => _["Id", DataRowVersion.Original].ToString() == e.Entitätsid);
+                    r.Delete();
+                    break;
             }
+
+            _tb.AcceptChanges();
         }
 
 
@@ -64,6 +75,7 @@ namespace AppKontakt
             switch (e.Name)
             {
                 case "NeuerKontakt":
+                    var i = int.Parse(e.Payload["RowIndex"]);
                     r = _tb.Rows[int.Parse(e.Payload["RowIndex"])];
                     r["Id"] = e.Entitätsid;
                     r.AcceptChanges();
@@ -79,10 +91,6 @@ namespace AppKontakt
         }
 
 
-        public void Dispose()
-        {
-            Speichern();
-            _tb = null;
-        }
+        public void Dispose() {}
     }
 }

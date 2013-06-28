@@ -7,43 +7,6 @@ namespace AppKontakt
 {
     class Aggregat
     {
-        //readonly Dictionary<string, Kontakt> _entitäten = new Dictionary<string, Kontakt>();
-
-
-        //public void Rehydrieren(IEnumerable<Domänenevent> events)
-        //{
-        //    foreach (var e in events)
-        //    {
-        //        Kontakt k;
-
-        //        switch (e.Name)
-        //        {
-        //            case "NeuerKontakt":
-        //                k = new Kontakt();
-        //                k.Id = e.Entitätsid;
-        //                _entitäten.Add(k.Id, k);
-        //                k.Name = e.Payload["Name"];
-        //                k.Straße = e.Payload["Straße"];
-        //                k.PLZ = e.Payload["PLZ"];
-        //                k.Ort = e.Payload["Ort"];
-        //                k.Tel = e.Payload["Tel"];
-        //                break;
-        //            case "KontaktVerändert":
-        //                k = _entitäten[e.Entitätsid];
-        //                k.Name = e.Payload["Name"];
-        //                k.Straße = e.Payload["Straße"];
-        //                k.PLZ = e.Payload["PLZ"];
-        //                k.Ort = e.Payload["Ort"];
-        //                k.Tel = e.Payload["Tel"];
-        //                break;
-        //            case "KontaktGelöscht":
-        //                _entitäten.Remove(e.Entitätsid);
-        //                break;
-        //        }
-        //    }
-        //}
-
-
         public IEnumerable<Domänenevent> Ausführen(IEnumerable<Domänenkommando> kommandos)
         {
             return kommandos.Select((cmd, i) => {

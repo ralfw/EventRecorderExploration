@@ -14,10 +14,9 @@ namespace AppKontakt
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using (var rm = new ReadModel())
+            using(var er = new EventRecorder())
+            using (var rm = new ReadModel(er))
             {
-                var er = new EventRecorder();
-
                 var dom = new Domäne(rm, er);
                 var view = new View();
 
