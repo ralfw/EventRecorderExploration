@@ -44,7 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KontakteAggregat.cs" />
+    <Compile Include="Aggregat.cs" />
+    <Compile Include="Domänenkommando.cs" />
+    <Compile Include="ReadModel.cs" />
     <Compile Include="View.cs">
       <SubType>Form</SubType>
     </Compile>

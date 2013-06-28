@@ -8,25 +8,28 @@ namespace AppKontakt
 {
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var er = new EventRecorder();
-            var dom = new Domäne(er);
-            var dlg = new View();
+            using (var rm = new ReadModel())
+            {
+                var er = new EventRecorder();
 
-            dlg.Veränderte_Daten += dom.Speichern;
-            dom.Aktuelle_Kontakte += dlg.Anzeigen;
+                var dom = new Domäne(rm, er);
+                var view = new View();
 
-            dom.Starten();
+                er.Aufgenommen += rm.Nachführen;
 
-            Application.Run(dlg);
+                view.Veränderte_Daten += dom.Speichern;
+                dom.Tabelle += view.Anzeigen;
+
+                dom.Starten();
+
+                Application.Run(view);
+            }
         }
     }
 }

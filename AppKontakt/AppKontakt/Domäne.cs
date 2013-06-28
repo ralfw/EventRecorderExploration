@@ -7,11 +7,13 @@ namespace AppKontakt
 {
     class Domäne
     {
+        private readonly ReadModel _readModel;
         private readonly EventRecorder _eventRecorder;
         private readonly Map _map;
 
-        public Domäne(EventRecorder eventRecorder)
+        public Domäne(ReadModel readModel, EventRecorder eventRecorder)
         {
+            _readModel = readModel;
             _eventRecorder = eventRecorder;
             _map = new Map();
         }
@@ -19,23 +21,20 @@ namespace AppKontakt
 
         public void Starten()
         {
-            var events = _eventRecorder.Wiedergeben();
-            var agg = new KontakteAggregat();
-            agg.Rehydrieren(events);
-            var tb = _map.Entitäten_nach_Tabelle(agg.Entitäten);
-            Aktuelle_Kontakte(tb);
+            var tb = _readModel.Laden();
+            Tabelle(tb);
         }
 
-        public void Speichern(DataTable kontakte)
+
+        public void Speichern(DataTable tb)
         {
-            var agg = new KontakteAggregat();
-            var events = agg.Events_aus_Veränderungen_ableiten(kontakte);
+            var kommandos = _map.Kommandos_aus_Veränderungen_generieren(tb);
+            var agg = new Aggregat();
+            var events = agg.Ausführen(kommandos);
             _eventRecorder.Aufnehmen(events);
-            _map.Tabelle_aktualisieren(kontakte, events);
-            Aktuelle_Kontakte(kontakte);
         }
- 
 
-        public event Action<DataTable> Aktuelle_Kontakte;
+
+        public event Action<DataTable> Tabelle;
     }
 }
