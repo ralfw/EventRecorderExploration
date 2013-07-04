@@ -1,2 +1,3 @@
 git clean -df
-git checkout -- .
+git reset --hard
+rem git checkout -- .
