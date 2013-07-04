@@ -53,7 +53,7 @@ namespace TTTmitEventSource
 
             foreach (var reihe in new[] { new[] { "00", "01", "02" }, new[] { "10", "11", "12" }, new[] { "20", "21", "22" },
                                             new[] { "00", "10", "20" }, new[] { "01", "11", "21" }, new[] { "02", "12", "22" },
-                                            new[] { "00", "11", "11" }, new[] { "20", "11", "02" }})
+                                            new[] { "00", "11", "22" }, new[] { "20", "11", "02" }})
             {
                 var spielstand = Prüfe_Reihe_auf_Gewinn(reihe);
                 if (spielstand != Spielstände.Läuft) return spielstand;
